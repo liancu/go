@@ -1,14 +1,13 @@
 package repository
 
 import (
-	"database/sql"
 	"github.com/adore-me/hello/model"
 )
 
 type Product interface {
-	Create(*model.Product) error
-	Get(*model.Product) error
-	GetOne(*model.Product, string) (*sql.Row, error)
-	Update(product *model.Product, column string, value any) error
-	Delete(*model.Product, int) error
+	Create(*model.Product) (*model.Product, error)
+	Get() (*[]model.Product, error)
+	GetOne(productId string) (*model.Product, error)
+	Update(productId string, productData model.Product) (*model.Product, error)
+	Delete(productId string) error
 }
