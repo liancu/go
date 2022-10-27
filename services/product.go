@@ -47,5 +47,3 @@ func (p *Product) DeleteProduct(productId string) error {
 
 	return p.repo.Delete(productId)
 }
-
-//todo celelalte metode si validarea (ad labum validarea, nu cu pachete)

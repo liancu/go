@@ -10,6 +10,6 @@ type Product struct {
 	CreatedAt time.Time `json:"-"`
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
-	Name      string         `json:"name" binding:"required"`
+	Name      string         `json:"name" binding:"required,min=2,max=100,lowercase"`
 	Price     uint           `json:"price" binding:"required"`
 }

@@ -36,7 +36,7 @@ func CreateProduct(ctx *gin.Context) {
 	err := ctx.BindJSON(&prod)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "invalid data"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid inputs. Please check your inputs"})
 		return
 	}
 
@@ -82,7 +82,7 @@ func UpdateProduct(ctx *gin.Context) {
 	err := ctx.BindJSON(&prod)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "invalid data"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid inputs. Please check your inputs"})
 		return
 	}
 
