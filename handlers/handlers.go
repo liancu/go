@@ -3,7 +3,7 @@ package handlers
 import (
 	"fmt"
 	"github.com/adore-me/hello/model"
-	"github.com/adore-me/hello/repository"
+	"github.com/adore-me/hello/services"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -32,20 +32,17 @@ func Hello(ctx *gin.Context) {
 }
 
 func CreateProduct(ctx *gin.Context) {
-	var request productRequest
-	err := ctx.BindJSON(&request)
+	var prod model.Product
+	err := ctx.BindJSON(&prod)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "invalid data"})
 		return
 	}
 
-	repo := ctx.MustGet("repo").(*repository.SqlLite)
+	service := ctx.MustGet("product-service").(*services.Product)
 
-	p, err := repo.Create(&model.Product{
-		Name:  request.Name,
-		Price: request.Price,
-	})
+	p, err := service.CreateProduct(&prod)
 
 	if err != nil {
 		log.Fatal(err)
@@ -57,15 +54,9 @@ func CreateProduct(ctx *gin.Context) {
 func GetProduct(ctx *gin.Context) {
 	productId := ctx.Param("id")
 
-	// .(*repository.SqlLite) - cast!
-	repo := ctx.MustGet("repo").(*repository.SqlLite)
+	service := ctx.MustGet("product-service").(*services.Product)
 
-	p, err := repo.GetOne(productId)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println(p)
+	p, err := service.GetProduct(productId)
 
 	if err != nil {
 		log.Fatal(err)
@@ -74,40 +65,30 @@ func GetProduct(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": p})
 }
 func GetAllProducts(ctx *gin.Context) {
-	// .(*repository.SqlLite) - cast!
-	repo := ctx.MustGet("repo").(*repository.SqlLite)
+	service := ctx.MustGet("product-service").(*services.Product)
 
-	products, err := repo.Get()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println(products)
+	p, err := service.GetProducts()
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": products})
+	ctx.JSON(http.StatusOK, gin.H{"message": p})
 }
 
 func UpdateProduct(ctx *gin.Context) {
 	productId := ctx.Param("id")
-	var request productRequest
-	err := ctx.BindJSON(&request)
+	var prod model.Product
+	err := ctx.BindJSON(&prod)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "invalid data"})
 		return
 	}
 
-	repo := ctx.MustGet("repo").(*repository.SqlLite)
+	service := ctx.MustGet("product-service").(*services.Product)
 
-	//todo send an array of column and values
-	p, err := repo.Update(productId, model.Product{
-		Name:  request.Name,
-		Price: request.Price,
-	})
+	p, err := service.UpdateProduct(productId, prod)
 
 	if err != nil {
 		log.Fatal(err)
@@ -119,9 +100,9 @@ func UpdateProduct(ctx *gin.Context) {
 func DeleteProduct(ctx *gin.Context) {
 	productId := ctx.Param("id")
 
-	repo := ctx.MustGet("repo").(*repository.SqlLite)
+	service := ctx.MustGet("product-service").(*services.Product)
 
-	err := repo.Delete(productId)
+	err := service.DeleteProduct(productId)
 
 	if err != nil {
 		log.Fatal(err)

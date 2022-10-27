@@ -10,20 +10,18 @@ type SqlLite struct {
 	db *gorm.DB
 }
 
-// Create SqlLite este receiver
+// Create SqlLite este receiver (asta inseamna ca metodele tin de SQLite repo)
 func (r SqlLite) Create(product *model.Product) (*model.Product, error) {
-	var p model.Product
-
 	err := r.db.Create(product).Error
 	if err != nil {
 		return nil, err
 	}
-	return &p, nil
+	return product, nil
 }
 
 func (r SqlLite) Get() (*[]model.Product, error) {
 	var p []model.Product
-	//todo inseamna ca Find-ul pune in variabla p rezultatul metodei?
+	//todo inseamna ca Find-ul pune in variabla p rezultatul metodei? da
 	err := r.db.Find(&p).Error
 	if err != nil {
 		return nil, err
@@ -42,7 +40,6 @@ func (r SqlLite) GetOne(productId string) (*model.Product, error) {
 
 func (r SqlLite) Update(productId string, productData model.Product) (*model.Product, error) {
 	var p model.Product
-
 	err := r.db.Model(&p).Where("id = ?", productId).Updates(productData).Error
 
 	if err != nil {

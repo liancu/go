@@ -3,13 +3,13 @@ package main
 import (
 	"github.com/adore-me/hello/handlers"
 	"github.com/adore-me/hello/repository"
+	"github.com/adore-me/hello/services"
 	"github.com/gin-gonic/gin"
-	"log"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	//todo: creez un produs, il updatez, cer o lista si o afisez pe ecran cu fmt.println, si dupa il sterg
-	//todo sa pornesc api cu gin cum am facut data trecuta: il creez prin api, il citesc din db si il return din api. + sters
+	var log = logrus.New()
 
 	repo, err := repository.NewSqlLite("test.db")
 	if err != nil {
@@ -17,9 +17,11 @@ func main() {
 	}
 
 	r := gin.Default()
-	//functie anonima
+
+	productService := services.NewProductService(repo, log)
+
 	r.Use(func(c *gin.Context) {
-		c.Set("repo", repo)
+		c.Set("product-service", productService)
 		c.Next()
 	})
 
@@ -30,4 +32,6 @@ func main() {
 	r.PUT("/products/:id", handlers.UpdateProduct)
 	r.DELETE("/products/:id", handlers.DeleteProduct)
 	r.Run(":80")
+
+	//todo read about defer, cum se scriu if-urile
 }
